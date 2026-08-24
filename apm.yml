@@ -1,0 +1,20 @@
+name: goodies
+version: 0.1.0
+description: Agent skills and plugins by oognuyh
+license: MIT
+marketplace:
+  owner:
+    name: oognuyh
+    url: https://github.com/oognuyh
+  outputs:
+    claude:
+      path: .claude-plugin/marketplace.json
+    codex:
+      path: .agents/plugins/marketplace.json
+  packages:
+    - name: skills
+      source: ./plugins/skills
+      category: Productivity
+    - name: superca
+      source: ./plugins/superca
+      category: Productivity

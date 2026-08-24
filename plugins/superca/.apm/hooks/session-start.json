@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo Superca is installed. Before any response or action, load and follow using-superca through the native skill mechanism. Dispatched subagents should skip using-superca.",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

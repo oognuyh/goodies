@@ -1,0 +1,9 @@
+name: superca
+version: 0.1.0
+description: Superpowers lifecycle executed through Orca with durable project documentation
+author: oognuyh
+repository: https://github.com/oognuyh/goodies
+license: MIT
+targets: [claude, codex, opencode]
+dependencies: {}
+includes: auto

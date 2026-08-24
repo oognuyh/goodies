@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\":\"Superca: assess durable project documentation impact before completing change work. Update and review affected documents with maintaining-project-docs, or record why no update is needed.\"}'",
+            "commandWindows": "powershell.exe -NoProfile -Command \"ConvertTo-Json -Compress -InputObject @{systemMessage='Superca: assess durable project documentation impact before completing change work. Update and review affected documents with maintaining-project-docs, or record why no update is needed.'}\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
