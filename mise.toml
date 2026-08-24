@@ -1,0 +1,19 @@
+[tools]
+node = "24.16.0"
+uv = "0.9.15"
+"pipx:apm-cli" = "0.29.0"
+
+[tasks.marketplace]
+description = "Regenerate root Claude and Codex marketplace indexes"
+dir = "{{config_root}}"
+run = "node tools/package.mjs marketplace"
+
+[tasks.check]
+description = "Check mapped catalogs, source versions, and local build payloads"
+dir = "{{config_root}}"
+run = "node tools/package.mjs check"
+
+[tasks.pack]
+description = "Build and validate installable plugin bundles and root catalogs"
+dir = "{{config_root}}"
+run = "node tools/package.mjs pack"

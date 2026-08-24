@@ -1,0 +1,10 @@
+{
+  "name": "superca",
+  "version": "0.1.0",
+  "description": "Superpowers lifecycle executed through Orca with durable project documentation",
+  "author": {
+    "name": "oognuyh"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/oognuyh/goodies"
+}

@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "echo Superca is installed. Before any response or action, load and follow using-superca through the native skill mechanism. Dispatched subagents should skip using-superca.",
+            "timeout": 5,
+            "type": "command"
+          }
+        ],
+        "matcher": "startup|resume|clear|compact"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "echo '{\"systemMessage\":\"Superca: assess durable project documentation impact before completing change work. Update and review affected documents with maintaining-project-docs, or record why no update is needed.\"}'",
+            "commandWindows": "powershell.exe -NoProfile -Command \"ConvertTo-Json -Compress -InputObject @{systemMessage='Superca: assess durable project documentation impact before completing change work. Update and review affected documents with maintaining-project-docs, or record why no update is needed.'}\"",
+            "timeout": 5,
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  }
+}

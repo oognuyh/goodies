@@ -1,0 +1,10 @@
+{
+  "name": "skills",
+  "version": "0.1.0",
+  "description": "General-purpose agent skills, including Unimaid",
+  "author": {
+    "name": "oognuyh"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/oognuyh/goodies"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "goodies",
+  "interface": {
+    "displayName": "goodies"
+  },
+  "plugins": [
+    {
+      "name": "skills",
+      "source": {
+        "source": "local",
+        "path": "./build/marketplace/plugins/skills"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "superca",
+      "source": {
+        "source": "local",
+        "path": "./build/marketplace/plugins/superca"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

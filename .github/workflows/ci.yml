@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  validate-pull-request:
+    if: github.event_name == 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    concurrency:
+      group: ci-pr-${{ github.event.pull_request.number }}-${{ matrix.os }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@v4
+        with:
+          version: "2026.5.15"
+      - name: Build distribution
+        run: mise run pack
+      - name: Check generated distribution
+        run: mise run check
+
+  sync-branch:
+    if: github.event_name == 'push' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+      - uses: jdx/mise-action@v4
+        with:
+          version: "2026.5.15"
+      - name: Rebuild distribution
+        run: mise run pack
+      - name: Check generated distribution
+        run: mise run check
+      - name: Commit generated distribution when changed
+        env:
+          BRANCH: ${{ github.ref_name }}
+          TRIGGER_SHA: ${{ github.sha }}
+        run: |
+          # ZIPs are tag-only Release assets; branch commits contain the installable tree.
+          git rm -r --cached --ignore-unmatch build/archive
+          git add -f -A -- \
+            .claude-plugin/marketplace.json \
+            .agents/plugins/marketplace.json \
+            build/marketplace/plugins
+          if git diff --cached --quiet; then
+            echo 'Generated distribution is already current.'
+            exit 0
+          fi
+          remote_sha=$(git ls-remote origin "refs/heads/$BRANCH" | awk '{print $1}')
+          if [ "$remote_sha" != "$TRIGGER_SHA" ]; then
+            echo 'A newer branch commit exists; its workflow will generate the current distribution.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore: regenerate distribution'
+          if ! git push origin "HEAD:refs/heads/$BRANCH"; then
+            remote_sha=$(git ls-remote origin "refs/heads/$BRANCH" | awk '{print $1}')
+            if [ "$remote_sha" != "$TRIGGER_SHA" ]; then
+              echo 'The branch advanced during publication; a newer workflow owns synchronization.'
+              exit 0
+            fi
+            exit 1
+          fi

@@ -1,0 +1,9 @@
+name: skills
+version: 0.1.0
+description: General-purpose agent skills, including Unimaid
+author: oognuyh
+repository: https://github.com/oognuyh/goodies
+license: MIT
+targets: [claude, codex]
+dependencies: {}
+includes: auto

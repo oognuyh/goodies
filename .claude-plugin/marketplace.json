@@ -1,0 +1,23 @@
+{
+  "name": "goodies",
+  "owner": {
+    "name": "oognuyh",
+    "url": "https://github.com/oognuyh"
+  },
+  "plugins": [
+    {
+      "name": "skills",
+      "description": "General-purpose agent skills, including Unimaid",
+      "version": "0.1.0",
+      "category": "Productivity",
+      "source": "./build/marketplace/plugins/skills"
+    },
+    {
+      "name": "superca",
+      "description": "Superpowers lifecycle executed through Orca with durable project documentation",
+      "version": "0.1.0",
+      "category": "Productivity",
+      "source": "./build/marketplace/plugins/superca"
+    }
+  ]
+}

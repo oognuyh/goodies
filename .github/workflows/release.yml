@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      commit: ${{ steps.snapshot.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Require a tag on main history
+        id: snapshot
+        run: |
+          git merge-base --is-ancestor HEAD refs/remotes/origin/main
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: jdx/mise-action@v4
+        with:
+          version: "2026.5.15"
+          cache: false
+      - name: Archive the tagged bundles without rebuilding
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          node tools/archive.mjs "$RELEASE_TAG"
+          mise run check
+          (cd build/archive && sha256sum -- *.zip > SHA256SUMS)
+      - name: Pass verified assets to the publisher
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-${{ github.sha }}
+          path: build/archive/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      # No checkout or execution of repository code in this write-privileged job.
+      - uses: actions/download-artifact@v8
+        with:
+          name: release-${{ github.sha }}
+          path: release
+      - name: Publish assets for the existing tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          REPOSITORY: ${{ github.repository }}
+          EXPECTED_COMMIT: ${{ needs.prepare.outputs.commit }}
+        run: |
+          (cd release && sha256sum --check SHA256SUMS)
+          actual_commit=$(gh api "repos/$REPOSITORY/commits/$RELEASE_TAG" --jq .sha)
+          if [ "$actual_commit" != "$EXPECTED_COMMIT" ]; then
+            echo 'Tag moved after preparation; refusing to publish mismatched assets.' >&2
+            exit 1
+          fi
+          options=()
+          if [[ "${RELEASE_TAG%%+*}" == *-* ]]; then
+            options+=(--prerelease)
+          fi
+          gh release create "$RELEASE_TAG" release/*.zip release/SHA256SUMS \
+            --repo "$REPOSITORY" --verify-tag --generate-notes "${options[@]}"
