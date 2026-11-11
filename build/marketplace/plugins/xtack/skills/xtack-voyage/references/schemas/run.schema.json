@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "xtack run",
+  "type": "object",
+  "properties": {
+    "target": {
+      "type": "object",
+      "properties": {
+        "root": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "root",
+        "paths"
+      ]
+    },
+    "cwd": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "argv": {
+      "type": "array",
+      "minItems": 1,
+      "prefixItems": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "output_limit_bytes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 65536
+    }
+  },
+  "required": [
+    "target",
+    "cwd",
+    "argv",
+    "timeout_ms"
+  ]
+}

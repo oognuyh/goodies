@@ -1,0 +1,11 @@
+{
+  "name": "xtack",
+  "version": "0.1.0",
+  "description": "Evidence-led engineering workflows for coding agents",
+  "author": {
+    "name": "oognuyh"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/oognuyh/goodies",
+  "skills": "./skills/"
+}

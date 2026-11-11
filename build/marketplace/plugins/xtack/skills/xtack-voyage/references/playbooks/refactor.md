@@ -1,0 +1,7 @@
+# Refactor playbook
+
+Use when the authorized outcome is to change structure while preserving the agreed observable behavior. Establish the interfaces, consumers, compatibility requirements, and existing behavior before editing; identify which behavior is intentionally excluded from preservation. Do not infer a feature change from a request to restructure.
+
+Use existing checks or meaningful characterization probes to establish relevant behavior before the change, especially at public boundaries and for consequential errors or state transitions. Compare structural alternatives when needed and apply the ADR rule before dependent work. Split the change into coherent units that can be reviewed and verified without leaving the system in an unusable state. Preserve unrelated work.
+
+Run the applicable basic checks; conduct review proportional to actual risk; execute relevant regression and integration checks on the current target. Compare against the independent contract or baseline, not just the new implementation. If behavior was intended to stay unchanged, an unexplained difference is a finding, not a new contract. Classify failures and, when they expose an incorrect contract or insufficient design, revisit the affected intent and design within the user's scope and reassess any ADR-worthy decision before dependent work. Correct authorized failures and recheck affected results. If there is no reliable baseline or a material path cannot be tested, identify the affected condition as unverified.

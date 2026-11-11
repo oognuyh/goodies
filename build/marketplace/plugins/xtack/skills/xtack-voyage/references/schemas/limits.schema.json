@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "xtack limits",
+  "description": "Each requested limit needs usage and a non-placeholder source reference for the gate to assess it. An exhausted item does not establish a separate unknown item.",
+  "type": "object",
+  "properties": {
+    "time_ms": {
+      "type": "object",
+      "properties": {
+        "max": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "usage": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "host",
+                    "tool",
+                    "ledger"
+                  ]
+                },
+                "reference": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": []
+            }
+          },
+          "required": []
+        },
+        "xtack_precision": {
+          "$ref": "#/$defs/precisionClaim"
+        }
+      },
+      "required": [
+        "max"
+      ]
+    },
+    "tokens": {
+      "type": "object",
+      "properties": {
+        "max": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "usage": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "host",
+                    "tool",
+                    "ledger"
+                  ]
+                },
+                "reference": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": []
+            }
+          },
+          "required": []
+        },
+        "xtack_precision": {
+          "$ref": "#/$defs/precisionClaim"
+        }
+      },
+      "required": [
+        "max"
+      ]
+    },
+    "cost": {
+      "type": "object",
+      "properties": {
+        "max": {
+          "type": "number",
+          "minimum": 0
+        },
+        "usage": {
+          "type": "object",
+          "properties": {
+            "currency": {
+              "description": "Optional. If present, a disclosed nonempty string must exactly match the declared cost currency; otherwise the cost assessment is unverified. Omission assumes the declared currency. Any JSON value remains structurally accepted."
+            },
+            "value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "host",
+                    "tool",
+                    "ledger"
+                  ]
+                },
+                "reference": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": []
+            }
+          },
+          "required": []
+        },
+        "currency": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "xtack_precision": {
+          "$ref": "#/$defs/precisionClaim"
+        }
+      },
+      "required": [
+        "max",
+        "currency"
+      ]
+    },
+    "retries": {
+      "type": "object",
+      "properties": {
+        "max": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "usage": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "host",
+                    "tool",
+                    "ledger"
+                  ]
+                },
+                "reference": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": []
+            }
+          },
+          "required": []
+        },
+        "xtack_precision": {
+          "$ref": "#/$defs/precisionClaim"
+        }
+      },
+      "required": [
+        "max"
+      ]
+    }
+  },
+  "required": [],
+  "additionalProperties": false,
+  "$defs": {
+    "precisionClaim": {
+      "description": "Value-bound parse precision claim; not authenticated provenance.",
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": "xtack-budget-precision-v1"
+        },
+        "status": {
+          "enum": [
+            "verified",
+            "unverified"
+          ]
+        },
+        "binding": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "version",
+        "status",
+        "binding"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
