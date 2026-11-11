@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "xtack review",
+  "type": "object",
+  "properties": {
+    "disposition": {
+      "enum": ["non-blocking", "blocked", "unverified"],
+      "description": "The actual reviewer overall disposition; its authenticity and scope require independent confirmation."
+    },
+    "requirements": {
+      "enum": [
+        "pass",
+        "fail",
+        "unverified"
+      ]
+    },
+    "standards": {
+      "enum": [
+        "pass",
+        "fail",
+        "unverified"
+      ]
+    },
+    "reference": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "target_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "severity": {
+            "enum": [
+              "minor",
+              "major",
+              "critical"
+            ]
+          },
+          "status": {
+            "enum": [
+              "open",
+              "accepted",
+              "resolved"
+            ]
+          },
+          "location": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "criterion": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "resolution_evidence": {
+            "type": "string",
+            "description": "Evidence supporting a declared resolution; the gate assesses a resolved finding without it as unverified."
+          },
+          "impact": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "confidence": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S",
+            "description": "For an accepted minor finding, a missing or explicit unknown-only rationale leaves an otherwise eligible review unverified."
+          },
+          "residual_risk": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S",
+            "description": "For an accepted minor finding, a missing or explicit unknown-only residual risk leaves an otherwise eligible review unverified."
+          }
+        },
+        "required": [
+          "severity",
+          "status",
+          "location",
+          "criterion",
+          "evidence",
+          "impact",
+          "confidence"
+        ]
+      }
+    },
+    "independence": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "confirmed",
+            "unverified"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "reviewer": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "implementer": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    "target_identity": {
+      "$ref": "receipt.schema.json#/properties/target_after"
+    },
+    "intent_fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Full intent fingerprint from the route result."
+    },
+    "review_context_fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Review context fingerprint from the route used for the actual review; an absent, invalid or stale value leaves an otherwise eligible review unverified."
+    }
+  },
+  "required": [
+    "disposition",
+    "requirements",
+    "standards"
+  ]
+}

@@ -1,0 +1,284 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "xtack receipt",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": "xtack-run-v1"
+    },
+    "argv": {
+      "type": "array",
+      "minItems": 1,
+      "prefixItems": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "cwd": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "started_at": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "ended_at": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "duration_ms": {
+      "type": "number",
+      "minimum": 0
+    },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "arch": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "node": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "platform",
+        "arch",
+        "node"
+      ]
+    },
+    "status": {
+      "enum": [
+        "success",
+        "failed",
+        "timed_out",
+        "signalled",
+        "spawn_error"
+      ]
+    },
+    "exit_code": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "signal": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "process_group_observation": {
+      "type": "object",
+      "description": "Optional point-in-time group observation; absence does not prove descendant termination or isolation.",
+      "properties": {
+        "status": { "enum": ["absent", "present_or_reused", "unknown", "unsupported"] }
+      },
+      "required": ["status"]
+    },
+    "cleanup": {
+      "type": "object",
+      "description": "Optional observations for a timeout; they do not establish descendant termination.",
+      "properties": {
+        "status": { "const": "unverified" },
+        "scope": { "enum": ["process_group", "direct_child"] },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "signal": { "enum": ["SIGTERM", "SIGKILL"] },
+              "outcome": { "enum": ["sent", "not_found", "failed", "skipped"] },
+              "reason": { "type": "string" },
+              "error": { "type": "string" }
+            },
+            "required": ["signal", "outcome"]
+          }
+        }
+      },
+      "required": ["status", "scope", "attempts"]
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "stdout": {
+      "type": "object",
+      "description": "Original byte count and optional UTF-8-decoded capture. If text is present and truncated is false, re-encoding it cannot be shorter than bytes; a referenced positive receipt with that contradiction is unverified by the gate. Decoding invalid bytes can expand text.",
+      "properties": {
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "text": {
+          "type": "string"
+        },
+        "truncated": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "bytes"
+      ]
+    },
+    "stderr": {
+      "type": "object",
+      "description": "Original byte count and optional UTF-8-decoded capture, with the same complete-output consistency rule as stdout.",
+      "properties": {
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "text": {
+          "type": "string"
+        },
+        "truncated": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "bytes"
+      ]
+    },
+    "target_before": {
+      "type": "object",
+      "properties": {
+        "snapshot_algorithm": {
+          "description": "Snapshot identity algorithm. The current core recognizes only the string xtack-snapshot-v4; missing or other values remain readable for compatibility but cannot establish current identity."
+        },
+        "root": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 1
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "root",
+        "paths",
+        "digest",
+        "complete",
+        "files",
+        "issues"
+      ]
+    },
+    "target_after": {
+      "type": "object",
+      "properties": {
+        "snapshot_algorithm": {
+          "description": "Snapshot identity algorithm. The current core recognizes only the string xtack-snapshot-v4; missing or other values remain readable for compatibility but cannot establish current identity."
+        },
+        "root": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 1
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "root",
+        "paths",
+        "digest",
+        "complete",
+        "files",
+        "issues"
+      ]
+    },
+    "target_unchanged": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "version",
+    "argv",
+    "cwd",
+    "started_at",
+    "ended_at",
+    "duration_ms",
+    "environment",
+    "status",
+    "exit_code",
+    "signal",
+    "error",
+    "timeout_ms",
+    "stdout",
+    "stderr",
+    "target_before",
+    "target_after",
+    "target_unchanged"
+  ]
+}

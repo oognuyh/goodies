@@ -1,0 +1,584 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "xtack gate",
+  "$defs": {
+    "receiptPrecision": {
+      "type": "object",
+      "description": "Ledger-local receipt number consistency claims, bound to location and serialized receipt (including object key order); not authenticated.",
+      "properties": {
+        "version": { "const": "xtack-receipt-precision-v1" },
+        "inventory": { "type": "object", "description": "Historical receipt locations; incomplete inventories cannot establish new-copy reuse.", "properties": { "complete": { "type": "boolean" }, "inline": { "type": "array", "items": { "type": "string", "pattern": "^(0|[1-9][0-9]*)$" } }, "receipts": { "type": "array", "items": { "type": "string", "pattern": "^(?!constructor$|prototype$|__proto__$)[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" } } }, "required": ["complete", "inline", "receipts"] },
+        "inline": { "type": "object", "propertyNames": { "pattern": "^(0|[1-9][0-9]*)$" }, "additionalProperties": { "$ref": "#/$defs/receiptPrecisionClaim" } },
+        "receipts": { "type": "object", "propertyNames": { "pattern": "^(?!constructor$|prototype$|__proto__$)[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" }, "additionalProperties": { "$ref": "#/$defs/receiptPrecisionClaim" } }
+      },
+      "required": ["version", "inline", "receipts"]
+    },
+    "receiptPrecisionClaim": {
+      "type": "object",
+      "properties": {
+        "version": { "const": "xtack-receipt-precision-v1" },
+        "status": { "enum": ["verified", "unverified"] },
+        "binding": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      },
+      "required": ["version", "status", "binding"]
+    },
+    "ciIdPrecision": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "enum": [
+            "xtack-ci-id-precision-v1",
+            "xtack-ci-id-precision-v2"
+          ]
+        },
+        "status": {
+          "enum": [
+            "verified",
+            "unverified"
+          ]
+        },
+        "binding": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "const": "recorded"
+                },
+                "context": {
+                  "enum": [
+                    "request",
+                    "ledger"
+                  ]
+                },
+                "token": {
+                  "type": "string",
+                  "maxLength": 4096,
+                  "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?([eE][+-]?[0-9]+)?$"
+                }
+              },
+              "required": [
+                "status",
+                "token"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "const": "omitted"
+                },
+                "context": {
+                  "enum": [
+                    "request",
+                    "ledger"
+                  ]
+                },
+                "length": {
+                  "type": "integer",
+                  "minimum": 4097
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              },
+              "required": [
+                "status",
+                "length",
+                "sha256"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "const": "unavailable"
+                }
+              },
+              "required": [
+                "status"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "version",
+        "status",
+        "binding"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "version": {
+                "const": "xtack-ci-id-precision-v2"
+              }
+            },
+            "required": [
+              "version"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source": {}
+            },
+            "required": [
+              "source"
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false,
+      "description": "Structural numeric run ID precision claim; not authenticated."
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "not": {
+        "properties": {
+          "ledger": {}
+        },
+        "required": [
+          "ledger"
+        ]
+      },
+      "properties": {
+        "version": {
+          "not": {
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^xtack-ledger-"
+              },
+              {
+                "not": {
+                  "const": "xtack-ledger-v2"
+                }
+              }
+            ]
+          },
+          "description": "Reserved xtack-ledger versions must be supported; unrelated raw metadata remains permitted."
+        },
+        "intent": {
+          "$ref": "intent.schema.json"
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "root": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "paths": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "root",
+            "paths"
+          ]
+        },
+        "risk_factors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        },
+        "risk_coverage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "factor": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "criterion_id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "rationale": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "required": [
+              "factor",
+              "criterion_id",
+              "rationale"
+            ]
+          }
+        },
+        "implementation": {
+          "$ref": "implementation.schema.json"
+        },
+        "limits": {
+          "$ref": "limits.schema.json"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "evidence.schema.json"
+          }
+        },
+        "review": {
+          "description": "Supplied review is retained verbatim, including missing or malformed dispositions; gate assesses those cases as unverified. Use review.schema.json to validate an eligibility-ready review payload."
+        },
+        "ci": {
+          "type": "object",
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "repo": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+            },
+            "run_id": {
+              "description": "Numeric IDs need exact safe-integer source precision at runtime; use a decimal string for larger IDs.",
+              "oneOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*$"
+                }
+              ]
+            },
+            "xtack_id_precision": {
+              "$ref": "#/$defs/ciIdPrecision"
+            },
+            "required_jobs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "required"
+          ]
+        },
+        "approval": {
+          "type": "object",
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "status": {
+              "enum": [
+                "approved",
+                "denied",
+                "unverified"
+              ]
+            },
+            "reference": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "action": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "scope": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "target_identity": {
+              "$ref": "receipt.schema.json#/properties/target_after"
+            }
+          },
+          "required": [
+            "required"
+          ]
+        },
+        "delivery": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "scope": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          },
+          "required": [
+            "action",
+            "scope"
+          ]
+        },
+        "receipt_precision": { "$ref": "#/$defs/receiptPrecision" },
+        "receipts": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^(?!constructor$|prototype$|__proto__$)[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "additionalProperties": {
+            "$ref": "receipt.schema.json"
+          },
+          "description": "Optional ledger-local receipt table; referenced by evidence.receipt_ref."
+        }
+      },
+      "required": [
+        "intent",
+        "target",
+        "evidence"
+      ]
+    },
+    {
+      "type": "object",
+      "required": [
+        "ledger"
+      ],
+      "properties": {
+        "version": {
+          "not": {
+            "allOf": [
+              {
+                "type": "string",
+                "pattern": "^xtack-core-"
+              },
+              {
+                "not": {
+                  "const": "xtack-core-v2"
+                }
+              }
+            ]
+          },
+          "description": "Reserved core result versions must be supported when reading an envelope."
+        },
+        "ledger": {
+          "type": "object",
+          "properties": {
+            "intent": {
+              "$ref": "intent.schema.json"
+            },
+            "target": {
+              "type": "object",
+              "properties": {
+                "root": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "paths": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "root",
+                "paths"
+              ]
+            },
+            "risk_factors": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "risk_coverage": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "factor": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "criterion_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "rationale": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  }
+                },
+                "required": [
+                  "factor",
+                  "criterion_id",
+                  "rationale"
+                ]
+              }
+            },
+            "implementation": {
+              "$ref": "implementation.schema.json"
+            },
+            "limits": {
+              "$ref": "limits.schema.json"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "$ref": "evidence.schema.json"
+              }
+            },
+            "review": {
+              "description": "Supplied review is retained verbatim, including missing or malformed dispositions; gate assesses those cases as unverified. Use review.schema.json to validate an eligibility-ready review payload."
+            },
+            "ci": {
+              "type": "object",
+              "properties": {
+                "required": {
+                  "type": "boolean"
+                },
+                "repo": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+                },
+                "run_id": {
+                  "description": "Numeric IDs need exact safe-integer source precision at runtime; use a decimal string for larger IDs.",
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^[1-9][0-9]*$"
+                    }
+                  ]
+                },
+                "xtack_id_precision": {
+                  "$ref": "#/$defs/ciIdPrecision"
+                },
+                "required_jobs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "\\S"
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "required"
+              ]
+            },
+            "approval": {
+              "type": "object",
+              "properties": {
+                "required": {
+                  "type": "boolean"
+                },
+                "status": {
+                  "enum": [
+                    "approved",
+                    "denied",
+                    "unverified"
+                  ]
+                },
+                "reference": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "action": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "scope": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "target_identity": {
+                  "$ref": "receipt.schema.json#/properties/target_after"
+                }
+              },
+              "required": [
+                "required"
+              ]
+            },
+            "version": {
+              "const": "xtack-ledger-v2"
+            },
+            "delivery": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "scope": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "action",
+                "scope"
+              ]
+            },
+            "receipt_precision": { "$ref": "#/$defs/receiptPrecision" },
+            "receipts": {
+              "type": "object",
+              "propertyNames": {
+                "pattern": "^(?!constructor$|prototype$|__proto__$)[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+              },
+              "additionalProperties": {
+                "$ref": "receipt.schema.json"
+              },
+              "description": "Optional ledger-local receipt table; referenced by evidence.receipt_ref."
+            }
+          },
+          "required": [
+            "intent",
+            "target",
+            "evidence",
+            "version"
+          ]
+        }
+      }
+    }
+  ]
+}

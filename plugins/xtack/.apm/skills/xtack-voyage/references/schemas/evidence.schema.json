@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "xtack evidence",
+  "type": "object",
+  "properties": {
+    "criterion_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "assertion": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "not_run",
+            "blocked",
+            "unverified"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "status",
+        "rationale"
+      ]
+    },
+    "receipt": {
+      "$ref": "receipt.schema.json"
+    },
+    "reference": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "target_identity": {
+      "$ref": "receipt.schema.json#/properties/target_after",
+      "description": "Recorded target identity for a referenced non-execution observation. Missing or incomparable identities are unverified."
+    },
+    "criterion_fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Fingerprint of the criterion from the route result; missing is unverified and a changed criterion is stale."
+    },
+    "receipt_ref": {
+      "type": "string",
+      "pattern": "^(?!constructor$|prototype$|__proto__$)[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "description": "Identifier in the same ledger receipts map; not a file path."
+    }
+  },
+  "required": [
+    "criterion_id"
+  ],
+  "not": {
+    "type": "object",
+    "properties": {
+      "receipt": {},
+      "receipt_ref": {}
+    },
+    "required": [
+      "receipt",
+      "receipt_ref"
+    ]
+  }
+}

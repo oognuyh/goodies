@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "xtack intent",
+  "type": "object",
+  "properties": {
+    "objective": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "included": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 1
+        },
+        "excluded": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        }
+      },
+      "required": [
+        "included",
+        "excluded"
+      ]
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    },
+    "domain_terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "meaning": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "term",
+          "meaning"
+        ]
+      }
+    },
+    "kind": {
+      "enum": [
+        "bugfix",
+        "feature",
+        "refactor",
+        "investigate"
+      ]
+    },
+    "risk": {
+      "enum": [
+        "light",
+        "standard",
+        "critical",
+        "unknown"
+      ]
+    },
+    "risk_reason": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "description"
+        ]
+      },
+      "minItems": 1,
+      "contains": {
+        "anyOf": [
+          {
+            "not": {
+              "required": [
+                "required"
+              ],
+              "type": "object",
+              "properties": {
+                "required": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "required": {
+                "const": true
+              }
+            },
+            "required": [
+              "required"
+            ],
+            "type": "object"
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "objective",
+    "scope",
+    "constraints",
+    "domain_terms",
+    "kind",
+    "risk",
+    "risk_reason",
+    "criteria"
+  ]
+}

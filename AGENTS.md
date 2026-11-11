@@ -48,6 +48,10 @@ Prefer a skill over a hook or command when the goal is a portable procedure rath
 - **Deploy vs compile:** `apm install` resolves dependencies and deploys primitives; `apm compile` generates context/rules from instructions and does not install skills, hooks, prompts, or MCP servers. This repository maintains its root `AGENTS.md` and `CLAUDE.md` manually: preview compile output before allowing it to write either file. See [compilation](https://github.com/microsoft/apm/blob/v0.29.0/docs/src/content/docs/producer/compile.md).
 - **Build and publish:** edit source manifests and `.apm/`, not generated indexes or `build/marketplace/plugins/`. Run `mise run pack` and `mise run check` from the repository root; add focused behavior tests and `apm audit` when relevant. Pull requests verify the build; branch CI syncs generated distribution files; release tags archive committed bundles. See [bundle packaging](https://github.com/microsoft/apm/blob/v0.29.0/docs/src/content/docs/producer/pack-a-bundle.md), [marketplace publishing](https://github.com/microsoft/apm/blob/v0.29.0/docs/src/content/docs/producer/publish-to-a-marketplace.md), [`tools/package.mjs`](tools/package.mjs), [CI](.github/workflows/ci.yml), and [release](.github/workflows/release.yml).
 
+## Commit messages
+
+Use `type(plugin): message` for changes scoped to one plugin, such as `feat(xtack): add goal coordination`. For repository-wide changes, omit the scope: `chore: update marketplace packaging`. Add a body when the reason or impact needs explanation.
+
 ## Safety and references
 
 Keep secrets out of manifests and hook scripts. Review executable hooks and self-defined MCP servers as trust boundaries; an installed package or a passing structural check is not approval to run them.

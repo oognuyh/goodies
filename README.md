@@ -9,6 +9,7 @@ terminal-friendly diagrams, and software development workflows.
 | --- | --- | --- |
 | [Skills](plugins/skills/README.md) | Korean writing and technical documentation, plus Mermaid diagrams rendered as text. Includes `cheolsoo`, `asd-stk100`, and `unimaid`. | Python 3 for ASD-STK100's style checker; Node.js for Unimaid. |
 | [Superca](plugins/superca/README.md) | Development workflows for planning, implementation, review, and project documentation, with supervised execution through Orca. | Orca CLI and runtime for workflows that change code, documentation, or lifecycle state. |
+| [Xtack](plugins/xtack/README.md) | Outcome-led engineering workflows with specialist routing, verification, and coordination of larger goals. | Node.js for the execution core and persistent goal records. |
 
 ## Installation
 
@@ -19,11 +20,13 @@ Add the marketplace, then install the plugin you want:
 claude plugin marketplace add oognuyh/goodies
 claude plugin install skills@goodies
 # Or: claude plugin install superca@goodies
+# Or: claude plugin install xtack@goodies
 
 # Codex
 codex plugin marketplace add oognuyh/goodies
 codex plugin add skills@goodies
 # Or: codex plugin add superca@goodies
+# Or: codex plugin add xtack@goodies
 ```
 
 Start a new session after installation so the host can discover the plugin.
@@ -58,8 +61,14 @@ Use helm to add CSV export to this project. Preserve the existing API,
 verify the behavior, and update any affected project documentation.
 ```
 
+```text
+Use xtack to reproduce the duplicate notification, fix it, and verify the result.
+```
+
 See the [Skills guide](plugins/skills/README.md) for individual skills and the
-[Superca guide](plugins/superca/README.md) for its lifecycle and Orca setup.
+[Superca guide](plugins/superca/README.md) for its lifecycle and Orca setup. The
+[Xtack guide](plugins/xtack/README.md) covers its skills, goal recovery, and
+host-specific invocation.
 
 ## Development
 

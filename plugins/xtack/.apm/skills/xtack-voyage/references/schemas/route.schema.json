@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "xtack route",
+  "type": "object",
+  "properties": {
+    "version": {
+      "not": { "allOf": [{ "type": "string", "pattern": "^xtack-ledger-" }, { "not": { "const": "xtack-ledger-v2" } }] },
+      "description": "Reserved xtack-ledger versions must be supported; unrelated raw metadata remains permitted."
+    },
+    "intent": {
+      "$ref": "intent.schema.json"
+    },
+    "risk_factors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    },
+    "limits": {
+      "$ref": "limits.schema.json"
+    }
+  },
+  "required": [
+    "intent"
+  ]
+}

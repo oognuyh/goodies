@@ -1,0 +1,9 @@
+name: xtack
+version: 0.1.0
+description: Evidence-led engineering workflows for coding agents
+author: oognuyh
+repository: https://github.com/oognuyh/goodies
+license: MIT
+targets: [claude, codex]
+dependencies: {}
+includes: auto
