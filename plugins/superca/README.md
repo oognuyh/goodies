@@ -35,18 +35,18 @@ Use a supported agent host and an available Orca CLI and runtime for mutation
 workflows. Read-only investigation can remain local; work that changes code,
 documentation, or lifecycle state must bind to Orca.
 
-The [goodies marketplace](https://github.com/oognuyh/goodies) provides Superca
+The [oognuyh marketplace](https://github.com/oognuyh/goodies) provides Superca
 as the `superca` plugin. Once the repository's marketplace distribution is
 published on `main`, install it through your host:
 
 ```sh
 # Claude Code
 claude plugin marketplace add oognuyh/goodies
-claude plugin install superca@goodies
+claude plugin install superca@oognuyh
 
 # Codex (alternative to Claude Code)
 codex plugin marketplace add oognuyh/goodies
-codex plugin add superca@goodies
+codex plugin add superca@oognuyh
 ```
 
 The `main` branch must contain both marketplace indexes

@@ -81,11 +81,11 @@ When the marketplace indexes and bundle are available on the selected repository
 ```sh
 # Claude Code
 claude plugin marketplace add oognuyh/goodies
-claude plugin install xtack@goodies
+claude plugin install xtack@oognuyh
 
 # Codex
 codex plugin marketplace add oognuyh/goodies
-codex plugin add xtack@goodies
+codex plugin add xtack@oognuyh
 ```
 
 Start a new session and invoke `/xtack:xtack` in Claude Code or `$xtack:xtack` in Codex. Remote marketplace installation has not been verified end to end. Local installations and invocations have been observed, but those checks do not establish behavior for every host configuration or task.

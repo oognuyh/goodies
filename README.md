@@ -18,15 +18,15 @@ Add the marketplace, then install the plugin you want:
 ```sh
 # Claude Code
 claude plugin marketplace add oognuyh/goodies
-claude plugin install skills@goodies
-# Or: claude plugin install superca@goodies
-# Or: claude plugin install xtack@goodies
+claude plugin install skills@oognuyh
+# Or: claude plugin install superca@oognuyh
+# Or: claude plugin install xtack@oognuyh
 
 # Codex
 codex plugin marketplace add oognuyh/goodies
-codex plugin add skills@goodies
-# Or: codex plugin add superca@goodies
-# Or: codex plugin add xtack@goodies
+codex plugin add skills@oognuyh
+# Or: codex plugin add superca@oognuyh
+# Or: codex plugin add xtack@oognuyh
 ```
 
 Start a new session after installation so the host can discover the plugin.

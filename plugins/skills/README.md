@@ -42,16 +42,16 @@ Unimaid resolves its bundled script relative to the installed `SKILL.md`, not th
 
 ### Install the plugin from GitHub
 
-The repository [`apm.yml`](../../apm.yml) registers one `skills` package in the `goodies` marketplace. The individual skills do not need separate marketplace entries. Once the repository's marketplace distribution has been published, use the commands for your host:
+The repository [`apm.yml`](../../apm.yml) registers one `skills` package in the `oognuyh` marketplace. The individual skills do not need separate marketplace entries. Once the repository's marketplace distribution has been published, use the commands for your host:
 
 ```sh
 # Claude Code
 claude plugin marketplace add oognuyh/goodies
-claude plugin install skills@goodies
+claude plugin install skills@oognuyh
 
 # Codex (alternative to Claude Code)
 codex plugin marketplace add oognuyh/goodies
-codex plugin add skills@goodies
+codex plugin add skills@oognuyh
 ```
 
 The `main` branch must contain both marketplace indexes (`.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`) and their referenced bundle (`build/marketplace/plugins/skills`). [Branch CI](../../.github/workflows/ci.yml) builds and commits these generated files on pushes to `main` and `develop`; wait for its distribution-sync commit before installing from GitHub. CLI syntax has been checked, but the remote installation has **not** been tested end to end.
